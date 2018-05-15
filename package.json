@@ -1,0 +1,14 @@
+{
+  "name": "bluckur-database",
+  "version": "1.0.0",
+  "description": "Leveldb wrapper for bluckur blockchain",
+  "main": "database.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "S64",
+  "license": "MIT",
+  "dependencies": {
+    "level": "^3.0.1"
+  }
+}
