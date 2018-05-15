@@ -1,19 +1,14 @@
 const level = require('level');
-
 const verbose = true;
-
-const databasePath;
-
 
 let db;
 
 class Database {
   constructor(databasePath) {
-    this.databasePath = databasePath;
-    this.open();
+    this.open(databasePath);
   }
 
-  open() {
+  open(databasePath) {
     this.db = level(databasePath, { createIfMissing: true }, (err, db) => {
       if (err && verbose) console.log(err);
     });
