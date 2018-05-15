@@ -77,8 +77,16 @@ class Database {
     });
   }
 
-  getAll(){
-    return this.db.createReadStream();
+  /**
+   * 
+   * @param {long} from Inclusive
+   * @param {long} to Inclusive
+   */
+  getAll(from, to) {
+    if (from && to)
+      return this.db.createReadStream({ gte: from, lte: to });
+    else
+      return this.db.createReadStream();
   }
 }
 
