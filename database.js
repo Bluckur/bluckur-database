@@ -76,6 +76,10 @@ class Database {
         .write(() => { resolve(true); });
     });
   }
+
+  getAll(){
+    return this.db.createReadStream();
+  }
 }
 
 module.exports = Database;
