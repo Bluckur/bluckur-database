@@ -11,13 +11,13 @@ class LevelDB {
 
   open(databasePath) {
     this.db = level(databasePath, { createIfMissing: true }, (err, db) => {
-      if (err && verbose) console.log(err);
+      if (err && this.verbose) console.log(err);
     });
   }
 
   close() {
     this.db.close((err) => {
-      if (err && verbose) console.log(err);
+      if (err && this.verbose) console.log(err);
     });
   }
 
@@ -29,7 +29,7 @@ class LevelDB {
   put(key, value) {
     return new Promise((resolve) => {
       this.db.put(key, value, (err) => {
-        if (err && verbose) console.log(`Unable to put ${value}into the database.`, err); // some kind of I/O error
+        if (err && this.verbose) console.log(`Unable to put ${value}into the database.`, err); // some kind of I/O error
         resolve(true);
       })
     });
@@ -43,9 +43,12 @@ class LevelDB {
   get(key) {
     return new Promise((resolve) => {
       this.db.get(key, (err, value) => {
-        if (err && verbose) return console.log(`${key} has no matches`);
-        if (err) resolve(false);
+        if (err && this.verbose) {
+          //console.log(`${key} has no matches`);
+          console.log(err);
+        }
         if (value) resolve(value);
+        resolve(false); //
       });
     });
   }
@@ -57,9 +60,20 @@ class LevelDB {
   delete(key) {
     return new Promise((resolve) => {
       this.db.del(key, (err) => {
-        if (err && verbose) console.log(err);
+        if (err && this.verbose) console.log(err);
+        if (err) resolve(false)
+        resolve(true);
+      });
+    });
+  }
+
+  deleteAll(ops) {
+    return new Promise((resolve) => {
+      this.db.batch(ops, function (err) {
+        if (err && this.verbose) return console.log('Error deleting batch!', err)
+        if(err) resolve(false);
+        resolve(true);
       })
-        .then(() => { resolve(true); });
     });
   }
 
@@ -82,11 +96,10 @@ class LevelDB {
   /**
    * 
    * @param {long} from Inclusive
-   * @param {long} to Inclusive
    */
-  getAll(from, to) {
-    if (from && to)
-      return this.db.createReadStream({ gte: from, lte: to });
+  getAll(from) {
+    if (from)
+      return this.db.createReadStream({ gte: from });
     else
       return this.db.createReadStream();
   }

@@ -1,27 +1,75 @@
 const LevelDB = require('./levelDB');
 const verbose = false;
+const startNumber = 1000000000;
 
 class LevelDatabase {
-    constructor(isBackupValidator = false) {
+    constructor() {
         this.levelBlocks = new LevelDB('./database/level/blocks', verbose);
         this.levelGlobalState = new LevelDB('./database/level/state', verbose);
-        this.isBackupValidator = isBackupValidator
     }
     //#region BlockChain
     getFullBlockChain() {
+        return new Promise((resolve) => {
+            let blockChain = [];
 
+            this.levelBlocks.getAll()
+                .on('data', function (data) {
+                    blockChain.push(data.value);
+                    if (verbose) console.log(data.key, '=', data.value)
+                })
+                .on('error', function (err) {
+                    if (verbose) console.log('Error while fetching global state', err);
+                    resolve(false);
+                })
+                .on('end', function () {
+                    resolve(blockChain);
+                });
+        });
     }
 
     putBlock(blockNr, block) {
-
+        return new Promise((resolve) => {
+            this.levelBlocks.put(blockNr + startNumber, block)
+                .then((value) => {
+                    resolve(value)
+                });
+        });
     }
 
     getBlock(blockNr) {
-
+        return new Promise((resolve) => {
+            this.levelBlocks.get(blockNr + startNumber)
+                .then((value) => {
+                    resolve(value)
+                });
+        });
     }
 
-    deleteBlock(blockNr) {
+    deleteFromBlock(blockNr) {
+        return new Promise((resolve) => {
+            new Promise((resolved) => {
+                let batchCommand = [];
 
+                this.levelBlocks.getAll(blockNr + startNumber)
+                    .on('data', function (data) {
+                        batchCommand.push({ type: 'del', key: data.key });
+                        if (verbose) console.log(data.key, '=', data.value)
+                    })
+                    .on('error', function (err) {
+                        if (verbose) console.log('Error while fetching keys', err);
+                        resolved(false);
+                    })
+                    .on('end', function () {
+                        resolved(batchCommand);
+                    });
+            }).then((value) => {
+                if (!value) resolve(false);
+                else this.levelBlocks.deleteAll(value)
+                    .then(() => {
+                        resolve(true)
+                    });
+            });
+        });
     }
     //#endregion
 
@@ -37,6 +85,7 @@ class LevelDatabase {
                 })
                 .on('error', function (err) {
                     if (verbose) console.log('Error while fetching global state', err);
+                    resolve(false);
                 })
                 .on('end', function () {
                     resolve(globalState);
@@ -78,7 +127,7 @@ class LevelDatabase {
                     if (!value)
                         resolve(false);
                     else
-                        this.levelGlobalState.put(key, ( +value + +permutation))
+                        this.levelGlobalState.put(key, (+value + +permutation))
                             .then(() => {
                                 resolve(true);
                             });
