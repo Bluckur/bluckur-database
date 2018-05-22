@@ -1,9 +1,9 @@
 const LevelDB = require('./levelDB');
-const verbose = false;
 const startNumber = 1000000000;
 
 class LevelDatabase {
-    constructor() {
+    constructor(verbose) {
+        this.verbose = verbose;
         this.levelBlocks = new LevelDB('./database/level/blocks', verbose);
         this.levelGlobalState = new LevelDB('./database/level/state', verbose);
     }
@@ -19,10 +19,10 @@ class LevelDatabase {
             this.levelBlocks.getAll()
                 .on('data', function (data) {
                     blockChain.push(data.value);
-                    if (verbose) console.log(data.key, '=', data.value)
+                    if (this.verbose) console.log(data.key, '=', data.value)
                 })
                 .on('error', function (err) {
-                    if (verbose) console.log('Error while fetching global state', err);
+                    if (this.verbose) console.log('Error while fetching global state', err);
                     resolve(false);
                 })
                 .on('end', function () {
@@ -70,10 +70,10 @@ class LevelDatabase {
                 this.levelBlocks.getAll(blockNr + startNumber)
                     .on('data', function (data) {
                         batchCommand.push({ type: 'del', key: data.key });
-                        if (verbose) console.log(data.key, '=', data.value)
+                        if (this.verbose) console.log(data.key, '=>', data.value)
                     })
                     .on('error', function (err) {
-                        if (verbose) console.log('Error while fetching keys', err);
+                        if (this.verbose) console.log('Error while fetching keys', err);
                         resolved(false);
                     })
                     .on('end', function () {
@@ -102,10 +102,10 @@ class LevelDatabase {
             this.levelGlobalState.getAll()
                 .on('data', function (data) {
                     globalState.push(data);
-                    if (verbose) console.log(data.key, '=', data.value)
+                    if (this.verbose) console.log(data.key, '=', data.value)
                 })
                 .on('error', function (err) {
-                    if (verbose) console.log('Error while fetching global state', err);
+                    if (this.verbose) console.log('Error while fetching global state', err);
                     resolve(false);
                 })
                 .on('end', function () {
@@ -139,8 +139,8 @@ class LevelDatabase {
     putAccountBalance(key, value) {
         return new Promise((resolve) => {
             this.levelGlobalState.put(key, value)
-                .then(() => {
-                    resolve(true);
+                .then((value) => {
+                    resolve(value)
                 });
         });
     }
@@ -158,8 +158,8 @@ class LevelDatabase {
                         resolve(false);
                     else
                         this.levelGlobalState.put(key, (+value + +permutation))
-                            .then(() => {
-                                resolve(true);
+                            .then((value) => {
+                                resolve(value)
                             });
                 });
         });

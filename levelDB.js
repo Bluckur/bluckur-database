@@ -30,6 +30,7 @@ class LevelDB {
     return new Promise((resolve) => {
       this.db.put(key, value, (err) => {
         if (err && this.verbose) console.log(`Unable to put ${value}into the database.`, err); // some kind of I/O error
+        if (err) resolve(false);
         resolve(true);
       })
     });
