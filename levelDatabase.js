@@ -3,8 +3,8 @@ const verbose = false;
 
 class LevelDatabase {
     constructor(isBackupValidator = false) {
-        this.levelBlocks = new LevelDB('../database/level/blocks', verbose);
-        this.levelGlobalState = new LevelDB('../database/level/state', verbose);
+        this.levelBlocks = new LevelDB('./database/level/blocks', verbose);
+        this.levelGlobalState = new LevelDB('./database/level/state', verbose);
         this.isBackupValidator = isBackupValidator
     }
     //#region BlockChain
