@@ -8,6 +8,10 @@ class LevelDatabase {
         this.levelGlobalState = new LevelDB('./database/level/state', verbose);
     }
     //#region BlockChain
+
+    /**
+     * Fetch the full blockchain in an array
+     */
     getFullBlockChain() {
         return new Promise((resolve) => {
             let blockChain = [];
@@ -27,6 +31,11 @@ class LevelDatabase {
         });
     }
 
+    /**
+     * Put block in database. 
+     * @param {number} blockNr = block.blockheader.blockNumber
+     * @param {JSON} block 
+     */
     putBlock(blockNr, block) {
         return new Promise((resolve) => {
             this.levelBlocks.put(blockNr + startNumber, block)
@@ -36,6 +45,10 @@ class LevelDatabase {
         });
     }
 
+    /**
+     * Gets block from database.
+     * @param {number} blockNr = block.blockheader.blockNumber
+     */
     getBlock(blockNr) {
         return new Promise((resolve) => {
             this.levelBlocks.get(blockNr + startNumber)
@@ -45,6 +58,10 @@ class LevelDatabase {
         });
     }
 
+    /**
+     * Delete all blocks from blockNr onwards.
+     * @param {number} blockNr = block.blockheader.blockNumber
+     */
     deleteFromBlock(blockNr) {
         return new Promise((resolve) => {
             new Promise((resolved) => {
@@ -74,6 +91,10 @@ class LevelDatabase {
     //#endregion
 
     //#region GlobalState
+
+    /**
+     * Gets global state from database
+     */
     getFullGlobalstate() {
         return new Promise((resolve) => {
             let globalState = [];
@@ -94,9 +115,13 @@ class LevelDatabase {
     }
 
     setFullGlobalState() {
-
+        //TODO maybe
     }
 
+    /**
+     * Gets balance from database.
+     * @param {string} key = public key
+     */
     getAccountBalance(key) {
         return new Promise((resolve) => {
             this.levelGlobalState.get(key)
@@ -106,6 +131,11 @@ class LevelDatabase {
         });
     }
 
+    /**
+     * Puts Balance in database
+     * @param {string} key = public key
+     * @param {number} value = balance
+     */
     putAccountBalance(key, value) {
         return new Promise((resolve) => {
             this.levelGlobalState.put(key, value)
@@ -117,8 +147,8 @@ class LevelDatabase {
 
     /**
      * Permutate the balance of an account
-     * @param {number} key 
-     * @param {number} permutation 
+     * @param {string} key = public key
+     * @param {number} permutation = change to balance
      */
     updateAccountBalance(key, permutation) {
         return new Promise((resolve) => {
