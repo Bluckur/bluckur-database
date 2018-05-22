@@ -44,6 +44,7 @@ class LevelDB {
     return new Promise((resolve) => {
       this.db.get(key, (err, value) => {
         if (err && verbose) return console.log(`${key} has no matches`);
+        if (err) resolve(false);
         if (value) resolve(value);
       });
     });
