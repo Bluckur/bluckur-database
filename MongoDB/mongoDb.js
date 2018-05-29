@@ -71,7 +71,15 @@ class MongoDB {
         });
     }
 
-    updateGlobalState(){
-
+    updateGlobalState(identifier, newData){
+        var query = {'identifier':identifier};
+        MyModel.findOneAndUpdate(query, newData, {upsert:true}, function(err, doc){
+            if (err) return handleError(err);
+            return
+            {
+                console.log("[MongoDB]: Global state updates succesfully");
+                return doc;
+            }
+        });
     }
 }
