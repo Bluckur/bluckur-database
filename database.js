@@ -154,17 +154,36 @@ class Database {
      * @param {string} key = public key
      * @param {number} permutation = change to balance
      */
-    updateAccountBalance(key, permutation) {
+    updateAccountBalance(transactionList) {
         if (this.isbackUpValidator) {
             //MongoDB
 
+
         } else {
-            //LevelDB
             return new Promise((resolve) => {
-                this.levelDB.updateAccountBalance(key, permutation)
-                    .then((value) => {
-                        resolve(value);
-                    })
+                //LevelDB
+                let transactions = {};
+
+                //Get all transactions from list and add to hashmap
+                transactionList.forEach(({ pubKey, perm }) => {
+                    if (!transactions[pubKey]) {
+                        transactions[pubKey] = { perm: perm };
+                    } else {
+                        let val = transactions[pubKey];
+                        transactions[pubKey] = { perm: (+perm + +val) };
+                    }
+                });
+
+                let promises = [];
+
+                for (var x in transactions) {
+
+                    var permutation = animal[x];
+                    promises.push(this.levelDB.updateAccountBalance(x, permutation));
+                }
+                Promise.all(promises).then((value) => {
+                    resolve(value);
+                });
             });
         }
     }
