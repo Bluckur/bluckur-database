@@ -114,14 +114,14 @@ class Database {
     * Gets balance from database.
     * @param {string} key = public key
     */
-    getAccountBalance(key) {
+    getAccountWallet(key) {
         if (this.isbackUpValidator) {
             //MongoDB
 
         } else {
             //LevelDB
             return new Promise((resolve) => {
-                this.levelDB.getAccountBalance(key)
+                this.levelDB.getAccountWallet(key)
                     .then((value) => {
                         resolve(value);
                     });
@@ -131,17 +131,16 @@ class Database {
 
     /**
      * Puts Balance in database
-     * @param {string} key = public key
-     * @param {number} value = balance
+     * @param {wallet} wallet = wallet object
      */
-    putAccountBalance(key, value) {
+    putAccountWallet(wallet) {
         if (this.isbackUpValidator) {
             //MongoDB
 
         } else {
             //LevelDB
             return new Promise((resolve) => {
-                this.levelDB.putAccountBalance(key, value)
+                this.levelDB.putAccountWallet(wallet.publicKey, wallet)
                     .then((value) => {
                         resolve(value);
                     });
@@ -150,11 +149,10 @@ class Database {
     }
 
     /**
-     * Permutate the balance of an account
-     * @param {string} key = public key
-     * @param {number} permutation = change to balance
+     * 
+     * @param {Array<>} transactionList 
      */
-    updateAccountBalance(transactionList) {
+    updateAccountWallet(transactionList) {
         if (this.isbackUpValidator) {
             //MongoDB
 
@@ -165,12 +163,18 @@ class Database {
                 let transactions = {};
 
                 //Get all transactions from list and add to hashmap
-                transactionList.forEach(({ pubKey, perm }) => {
+                transactionList.forEach(({ pubKey, coin, stake }) => {
                     if (!transactions[pubKey]) {
-                        transactions[pubKey] = { perm: perm };
+                        transactions[pubKey] = {
+                            coin: coin,
+                            stake: stake
+                        };
                     } else {
                         let val = transactions[pubKey];
-                        transactions[pubKey] = { perm: (+perm + +val) };
+                        transactions[pubKey] = {
+                            coin: (+coin + +val.coin),
+                            stake: (+stake + +val.stake)
+                        };
                     }
                 });
 
@@ -178,8 +182,8 @@ class Database {
 
                 for (var x in transactions) {
 
-                    var permutation = animal[x];
-                    promises.push(this.levelDB.updateAccountBalance(x, permutation));
+                    var transaction = transactions[x];
+                    promises.push(this.levelDB.updateAccountWallet(x, transaction));
                 }
                 Promise.all(promises).then((value) => {
                     resolve(value);

@@ -119,10 +119,10 @@ class LevelDatabase {
     }
 
     /**
-     * Gets balance from database.
+     * Gets wallet from database.
      * @param {string} key = public key
      */
-    getAccountBalance(key) {
+    getAccountWallet(key) {
         return new Promise((resolve) => {
             this.levelGlobalState.get(key)
                 .then((value) => {
@@ -134,11 +134,11 @@ class LevelDatabase {
     /**
      * Puts Balance in database
      * @param {string} key = public key
-     * @param {number} value = balance
+     * @param {wallet} value = balance {coinPerm, stakePerm}
      */
-    putAccountBalance(key, value) {
+    putAccountWallet(key, value) {
         return new Promise((resolve) => {
-            this.levelGlobalState.put(key, value)
+            this.levelGlobalState.put(key, JSON.stringify(value))
                 .then((value) => {
                     resolve(value)
                 });
@@ -148,19 +148,26 @@ class LevelDatabase {
     /**
      * Permutate the balance of an account
      * @param {string} key = public key
-     * @param {number} permutation = change to balance
+     * @param {wallet} permutation = change to balance
      */
-    updateAccountBalance(key, permutation) {
+    updateAccountWallet(key, wallet) {
         return new Promise((resolve) => {
             this.levelGlobalState.get(key)
                 .then((value) => {
                     if (!value)
-                        resolve(false);
-                    else
-                        this.levelGlobalState.put(key, (+value + +permutation))
+                        this.putAccountWallet(key, wallet);
+                    else {
+                        let wal = JSON.parse(value);
+                        // console.log(wal)
+                        // console.log(wallet)
+                        wallet.coin += wal.coin;
+                        wallet.stake += wal.stake;
+                        this.putAccountWallet(key, wallet)
                             .then((value) => {
                                 resolve(value)
                             });
+                    }
+
                 });
         });
     }
