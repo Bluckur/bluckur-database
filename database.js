@@ -1,10 +1,14 @@
 const LevelDatabase = require('./levelDatabase');
+const MongoDatabase = require('./MongoDB/mongoDb');
 const verbose = true;
 
 class Database {
     constructor(isbackUpValidator = false) {
         this.isbackUpValidator = isbackUpValidator;
         this.levelDB = new LevelDatabase();
+        this.mongoDB = new MongoDatabase(true);
+
+        this.mongoDB.connect();
     }
 
     //#region BlockChain
@@ -15,7 +19,12 @@ class Database {
     getFullBlockChain() {
         if (this.isbackUpValidator) {
             //MongoDB
-
+            return new Promise((resolve) => {
+                this.mongoDB.getFullBlockChain()
+                    .then((value) => {
+                        resolve(value);
+                    });
+            });
         } else {
             //LevelDB
             return new Promise((resolve) => {
@@ -35,7 +44,12 @@ class Database {
     putBlock(block) {
         if (this.isbackUpValidator) {
             //MongoDB
-
+            return new Promise((resolve) => {
+                this.mongoDB.putBlock(block)
+                    .then((value) => {
+                        resolve(value);
+                    });
+            });
         } else {
             //LevelDB
             return new Promise((resolve) => {
@@ -54,7 +68,12 @@ class Database {
     getBlock(blockNr) {
         if (this.isbackUpValidator) {
             //MongoDB
-
+            return new Promise((resolve) => {
+                this.mongoDB.getBlock(blockNr)
+                    .then((value) => {
+                        resolve(value);
+                    });
+            });
         } else {
             //LevelDB
             return new Promise((resolve) => {
@@ -94,7 +113,12 @@ class Database {
     getFullGlobalstate() {
         if (this.isbackUpValidator) {
             //MongoDB
-
+            return new Promise((resolve) => {
+                this.mongoDB.getFullGlobalState()
+                    .then((value) => {
+                        resolve(value);
+                    });
+            });
         } else {
             //LevelDB
             return new Promise((resolve) => {
@@ -117,7 +141,12 @@ class Database {
     getAccountWallet(key) {
         if (this.isbackUpValidator) {
             //MongoDB
-
+            return new Promise((resolve) => {
+                this.mongoDB.getAccountWallet(key)
+                    .then((value) => {
+                        resolve(value);
+                    });
+            });
         } else {
             //LevelDB
             return new Promise((resolve) => {
@@ -136,7 +165,12 @@ class Database {
     putAccountWallet(wallet) {
         if (this.isbackUpValidator) {
             //MongoDB
-
+            return new Promise((resolve) => {
+                this.mongoDB.putAccountWallet(wallet)
+                    .then((value) => {
+                        resolve(value);
+                    });
+            });
         } else {
             //LevelDB
             return new Promise((resolve) => {
@@ -173,7 +207,18 @@ class Database {
 
         if (this.isbackUpValidator) {
             //MongoDB
+            return new Promise((resolve) => {
+                let promises = [];
 
+                for (var x in transactions) {
+
+                    var transaction = transactions[x];
+                    promises.push(this.mongoDB.updateAccountWallet(x, transaction));
+                }
+                Promise.all(promises).then((value) => {
+                    resolve(value);
+                });
+            });
 
         } else {
             return new Promise((resolve) => {
