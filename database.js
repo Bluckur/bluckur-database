@@ -153,6 +153,24 @@ class Database {
      * @param {Array<>} transactionList 
      */
     updateAccountWallet(transactionList) {
+        let transactions = {};
+
+        //Get all transactions from list and add to hashmap
+        transactionList.forEach(({ pubKey, coin, stake }) => {
+            if (!transactions[pubKey]) {
+                transactions[pubKey] = {
+                    coin: coin,
+                    stake: stake
+                };
+            } else {
+                let val = transactions[pubKey];
+                transactions[pubKey] = {
+                    coin: (+coin + +val.coin),
+                    stake: (+stake + +val.stake)
+                };
+            }
+        });
+
         if (this.isbackUpValidator) {
             //MongoDB
 
@@ -160,23 +178,6 @@ class Database {
         } else {
             return new Promise((resolve) => {
                 //LevelDB
-                let transactions = {};
-
-                //Get all transactions from list and add to hashmap
-                transactionList.forEach(({ pubKey, coin, stake }) => {
-                    if (!transactions[pubKey]) {
-                        transactions[pubKey] = {
-                            coin: coin,
-                            stake: stake
-                        };
-                    } else {
-                        let val = transactions[pubKey];
-                        transactions[pubKey] = {
-                            coin: (+coin + +val.coin),
-                            stake: (+stake + +val.stake)
-                        };
-                    }
-                });
 
                 let promises = [];
 
