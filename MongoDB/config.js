@@ -9,4 +9,4 @@ let mongoDbConfig = {
     }
 }
 
-module.exports = developmentConfig;
+module.exports = mongoDbConfig;

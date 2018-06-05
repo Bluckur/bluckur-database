@@ -125,3 +125,4 @@ class MongoDatabase {
         return undefined;
     }
 }
+module.exports = MongoDB;
