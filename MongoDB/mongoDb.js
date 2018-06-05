@@ -3,8 +3,7 @@
 const mongoose = require('mongoose');
 const config = require('./config');
 
-import { Block } from 'bluckur-models/schemas/block'
-import { Wallet } from 'bluckur-models/schemas/wallet'
+import { blockBlueprint, walletBlueprint } from 'bluckur-models';
 
 let db;
 
@@ -14,14 +13,8 @@ let verbose;
  * Load Schemas
  */
 
-/*
-* Load Models
-*/
-let Block;
-let GameCharacter;
-
 class MongoDatabase {
-    constructor(verbose) 
+    constructor(verbose)
     {
         mongoose.connect('mongodb://'+
             config.login.user      +':'+
@@ -30,12 +23,7 @@ class MongoDatabase {
             config.port            +'/'+
             config.db
         );
-
-        Block = mongoose.model('Block');
-        Wallet = mongoose.model('Wallet');
-
         db = mongoose.connection;
-
         this.verbose = verbose;
     }
 
