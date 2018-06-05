@@ -5,10 +5,13 @@ const verbose = true;
 class Database {
     constructor(isbackUpValidator = false) {
         this.isbackUpValidator = isbackUpValidator;
-        this.levelDB = new LevelDatabase();
-        this.mongoDB = new MongoDatabase(true);
+        if (this.isbackUpValidator) {
+            this.mongoDB = new MongoDatabase(true);
 
-        this.mongoDB.connect();
+            this.mongoDB.connect();
+        } else {
+            this.levelDB = new LevelDatabase();
+        }
     }
 
     //#region BlockChain
