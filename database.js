@@ -174,7 +174,7 @@ class Database {
         } else {
             //LevelDB
             return new Promise((resolve) => {
-                this.levelDB.putAccountWallet(wallet.publicKey, wallet)
+                this.levelDB.putAccountWallet(wallet.pubKey, wallet)
                     .then((value) => {
                         resolve(value);
                     });
@@ -193,12 +193,14 @@ class Database {
         transactionList.forEach(({ pubKey, coin, stake }) => {
             if (!transactions[pubKey]) {
                 transactions[pubKey] = {
+                    pubKey: pubKey,
                     coin: coin,
                     stake: stake
                 };
             } else {
                 let val = transactions[pubKey];
                 transactions[pubKey] = {
+                    pubKey: pubKey,
                     coin: (+coin + +val.coin),
                     stake: (+stake + +val.stake)
                 };
