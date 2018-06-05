@@ -9,7 +9,6 @@ let db;
 
 let verbose;
 
-
 /*
 * Models
 */
@@ -17,8 +16,7 @@ let Block;
 let Wallet;
 
 class MongoDatabase {
-
-    constructor(verbose) 
+    constructor(verbose)
     {
         mongoose.connect('mongodb://'+
             config.login.user      +':'+
@@ -33,9 +31,8 @@ class MongoDatabase {
 
         var WalletSchema = new mongoose.Schema(blueprints.walletBlueprint);
         Wallet = mongoose.model('Wallet', WalletSchema);
-
+      
         db = mongoose.connection;
-
         this.verbose = verbose;
     }
 
