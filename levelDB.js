@@ -12,6 +12,7 @@ class LevelDB {
   open(databasePath) {
     this.db = level(databasePath, { createIfMissing: true }, (err, db) => {
       if (err && this.verbose) console.log(err);
+      if(this.verbose) console.log('LevelDb started at ' + databasePath);
     });
   }
 

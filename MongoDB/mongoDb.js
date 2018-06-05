@@ -16,13 +16,12 @@ let Block;
 let Wallet;
 
 class MongoDatabase {
-    constructor(verbose)
-    {
-        mongoose.connect('mongodb://'+
-            config.login.user      +':'+
-            config.login.password  +'@'+
-            config.host            +':'+
-            config.port            +'/'+
+    constructor(verbose) {
+        mongoose.connect('mongodb://' +
+            config.login.user + ':' +
+            config.login.password + '@' +
+            config.host + ':' +
+            config.port + '/' +
             config.db
         );
 
@@ -31,17 +30,16 @@ class MongoDatabase {
 
         var WalletSchema = new mongoose.Schema(blueprints.walletBlueprint);
         Wallet = mongoose.model('Wallet', WalletSchema);
-      
+
         db = mongoose.connection;
         this.verbose = verbose;
     }
 
-    connect()
-    {
+    connect() {
         /**
          * Open the database connection
          */
-        db.once('open', function(){
+        db.once('open', function () {
             console.log('Connected to MongoDB');
         })
 
@@ -51,78 +49,87 @@ class MongoDatabase {
         db.on('error', console.error.bind(console, 'Database connection error:'));
     }
 
-    getFullBlockChain(){
-        Block.find({ "header": { $ne: null } }, { 'header': 1, _id: 0 }, function(err, blocks){
-            if(err) console.log(err);
-            else return blocks;
+    getFullBlockChain() {
+        return new Promise((resolve) => {
+            Block.find({ "header": { $ne: null } }, { 'header': 1, _id: 0 }, function (err, blocks) {
+                if (err) console.log(err);
+                if (blocks) resolve(blocks);
+                resolve(false);
+            });
         });
-
-        return undefined;
     }
 
-    putBlock(blockData){
-        let block = new Block(JSON.parse(blockData));
-        block.save(function (err) {
-            if (err) return handleError(err);
-            else if(verbose)
-                console.log("[MongoDB]: Block saved succesfully");
+    putBlock(blockData) {
+        return new Promise((resolve) => {
+            let block = new Block(blockData);
+            block.save(function (err) {
+                if (err) {
+                    handleError(err);
+                    resolve(false)
+                }
+                else if (verbose)
+                    console.log("[MongoDB]: Block saved succesfully");
+                resolve(true);
+            });
         });
-
-        return undefined;
     }
 
-    getBlock(blockNr)
-    {
-        Block.findOne({}, { _id: 0, __v: 0 }).where('header.blockNumber').equals(blockNr), function(err, block){
-            if(err) console.log(err);
-            else return block;
-        }
-
-        return undefined;
-    }
-
-    getFullGlobalState()
-    {
-        Wallet.find({ "publicKey": { $ne: null } }, function(err, wallets){
-            if(err) console.log(err);
-            else return wallets;
-        });
-
-        return undefined;
-    }
-
-    getAccountWallet(walletKey)
-    {
-        Wallet.findOne({}, { _id: 0, __v: 0 }).where('publicKey').equals(walletKey), function(err, wallet){
-            if(err) console.log(err);
-            else return wallet;
-        }
-
-        return undefined;
-    }
-
-    putAccountWallet(walletData){
-        let wallet = new Wallet(JSON.parse(walletData));
-        wallet.save(function (err) {
-            if (err) return handleError(err);
-            else if(verbose)
-                console.log("[MongoDB]: New wallet saved succesfully");
-        });
-
-        return undefined;
-    }
-
-    updateAccountWallet(key, newData){
-        Wallet.findOneAndUpdate({'publicKey': key}, newData, {upsert:true}, function(err, doc){
-            if (err) return handleError(err);
-            return
-            {
-                console.log("[MongoDB]: Wallet updated succesfully");
-                return doc;
+    getBlock(blockNr) {
+        return new Promise((resolve) => {
+            Block.findOne({}, { _id: 0, __v: 0 }).where('header.blockNumber').equals(blockNr), function (err, block) {
+                if (err) console.log(err);
+                if (block) resolve(block);
+                resolve(false)
             }
         });
+    }
 
-        return undefined;
+    getFullGlobalState() {
+        return new Promise((resolve) => {
+            Wallet.find({ "publicKey": { $ne: null } }, function (err, wallets) {
+                if (err) console.log(err);
+                if (wallets) resolve(wallets);
+                resolve(false);
+            });
+        });
+    }
+
+    getAccountWallet(walletKey) {
+        return new Promise((resolve) => {
+            Wallet.findOne({}, { _id: 0, __v: 0 }).where('publicKey').equals(walletKey), function (err, wallet) {
+                if (err) console.log(err);
+                if (wallet) resolve(wallet);
+                resolve(false);
+            }
+        });
+    }
+
+    putAccountWallet(wallet) {
+        return new Promise((resolve) => {
+            let wallet = new Wallet(wallet);
+            wallet.save(function (err) {
+                if (err) {
+                    handleError(err);
+                    resolve(true)
+                }
+                else if (verbose)
+                    console.log("[MongoDB]: New wallet saved succesfully");
+                resolve(true);
+            });
+        });
+    }
+
+    updateAccountWallet(key, newData) {
+        return new Promise((resolve) => {
+            Wallet.findOneAndUpdate({ 'publicKey': key }, newData, { upsert: true }, function (err, doc) {
+                if (err) {
+                    handleError(err);
+                    resolve(false)
+                }
+                if (verbose) console.log("[MongoDB]: Wallet updated succesfully");
+                resovle(true);
+            });
+        });
     }
 }
 module.exports = MongoDB;
