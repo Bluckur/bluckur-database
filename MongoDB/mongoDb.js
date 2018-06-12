@@ -62,8 +62,7 @@ class MongoDatabase {
             let block = new Block(blockData);
             block.save(function(err) {
                 if (err) {
-                    handleError(err);
-                    resolve(false)
+                    reject(err);
                 } else if (verbose)
                     console.log("[MongoDB]: Block saved succesfully");
                 resolve(true);

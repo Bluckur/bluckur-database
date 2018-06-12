@@ -1,6 +1,6 @@
 const Database = require('./database');
 
-const db = new Database(false);
+const db = new Database(true);
 
 db.getFullBlockChain();
 
