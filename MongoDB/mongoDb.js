@@ -58,7 +58,7 @@ class MongoDatabase {
     }
 
     putBlock(blockData) {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             let block = new Block(blockData);
             block.save(function(err) {
                 if (err) {
