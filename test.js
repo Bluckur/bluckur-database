@@ -23,7 +23,7 @@ const block2 = Models.createBlockInstance({
 
 levelDB.openBlockchainLevelAsync().then(() => {
   console.log('b');
-  return levelDB.blockchainRepository.putBlockAsync(block1);
+  return levelDB.blockchainRepository.putBlocksAsync([block1]);
 }).then(() => {
   console.log('a');
   return levelDB.blockchainRepository.getBlockAsync(2);
