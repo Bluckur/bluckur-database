@@ -15,15 +15,17 @@ class Database {
     }
 
     connect() {
-            return new Promise((resolve, reject) => {
-                this.db.connect().then((value) => {
-                    this.connected = true;
-                    resolve();
-                }).catch((exception) => {
-                    this.connected = false
-                    reject(exception);
+            if (!connected) {
+                return new Promise((resolve, reject) => {
+                    this.db.connect().then((value) => {
+                        this.connected = true;
+                        resolve();
+                    }).catch((exception) => {
+                        this.connected = false
+                        reject(exception);
+                    });
                 });
-            });
+            }
         }
         //#region BlockChain
 
