@@ -1,6 +1,6 @@
 const Database = require('./database');
 
-const db = new Database(true);
+const db = new Database();
 
 db.connect().then((value) => {
     db.getFullBlockChain();
@@ -8,4 +8,4 @@ db.connect().then((value) => {
     db.getFullGlobalstate().then((resolve) => {
         console.log(resolve);
     });
-})
+});

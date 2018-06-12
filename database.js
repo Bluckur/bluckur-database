@@ -3,6 +3,7 @@ const MongoDatabase = require('./MongoDB/mongoDb');
 const verbose = true;
 let db;
 let connected = false;
+
 class Database {
     constructor(isbackUpValidator = false) {
         this.isbackUpValidator = isbackUpValidator;
@@ -40,7 +41,7 @@ class Database {
     }
 
     /**
-     * Put block in database. 
+     * Put block in database.
      * @param {Block} block must comply to the model block
      */
     putBlock(block) {
@@ -54,7 +55,7 @@ class Database {
 
     /**
      * Gets block from database.
-     * @param {number} blockNr 
+     * @param {number} blockNr
      */
     getBlock(blockNr) {
         return new Promise((resolve) => {
@@ -124,8 +125,8 @@ class Database {
     }
 
     /**
-     * 
-     * @param {Array<>} transactionList 
+     *
+     * @param {Array<>} transactionList
      */
     updateAccountWallet(transactionList) {
         let transactions = {};

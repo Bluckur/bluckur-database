@@ -4,7 +4,7 @@ let verbose;
 let db;
 
 class LevelDB {
-  constructor(databasePath, verbose = false) {
+  constructor(databasePath, verbose) {
     this.verbose = verbose;
     this.open(databasePath);
   }
@@ -32,7 +32,7 @@ class LevelDB {
     //console.log(value)
     return new Promise((resolve) => {
       this.db.put(key, value, (err) => {
-        if (err && this.verbose) console.log(`Unable to put ${value}into the database.`, err); // some kind of I/O error
+        if (err && this.verbose) console.log(`Unable to put ${value} into the database.`, err); // some kind of I/O error
         if (err) resolve(false);
         resolve(true);
       })
@@ -98,7 +98,7 @@ class LevelDB {
   }
 
   /**
-   * 
+   *
    * @param {long} from Inclusive
    */
   getAll(from) {
