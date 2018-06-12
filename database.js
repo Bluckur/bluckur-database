@@ -6,8 +6,7 @@ class Database {
     constructor(isbackUpValidator = false) {
         this.isbackUpValidator = isbackUpValidator;
         if (this.isbackUpValidator) {
-            this.mongoDB = new MongoDatabase(true);
-
+            this.mongoDB = new MongoDatabase();
             this.mongoDB.connect();
         } else {
             this.levelDB = new LevelDatabase();
@@ -41,15 +40,14 @@ class Database {
     }
 
     /**
-     * Put block in database. 
+     * Put block in database.
      * @param {Block} block must comply to the model block
      */
     putBlock(block) {
         if (this.isbackUpValidator) {
             //MongoDB
             return new Promise((resolve) => {
-                this.mongoDB.putBlock(block)
-                    .then((value) => {
+                this.mongoDB.putBlock(block).then((value) => {
                         resolve(value);
                     });
             });
@@ -66,7 +64,7 @@ class Database {
 
     /**
      * Gets block from database.
-     * @param {number} blockNr 
+     * @param {number} blockNr
      */
     getBlock(blockNr) {
         if (this.isbackUpValidator) {
@@ -186,8 +184,8 @@ class Database {
     }
 
     /**
-     * 
-     * @param {Array<>} transactionList 
+     *
+     * @param {Array<>} transactionList
      */
     updateAccountWallet(transactionList) {
         let transactions = {};
@@ -245,4 +243,8 @@ class Database {
     //#endregion
 }
 
-module.exports = Database;
+module.exports = () => {
+  return new Promise((resolve, reject) => {
+
+  });
+});
