@@ -7,7 +7,7 @@ const block1 = Models.createBlockInstance({
     validator: '75821586eeee3dc40f7ef83df809c9a38de017ed3adaed8130becd267f5eeffb',
     timestamp: +new Date(),
     blockReward: this.BLOCK_REWARD,
-    parentHash: '0',
+    parentHash: '235',
   }),
 });
 
