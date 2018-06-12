@@ -1,34 +1,48 @@
 const levelDB = require('./lib/levelDB/levelDB').createInstance();
 const Models = require('bluckur-models');
 
-const block1 = Models.createBlockInstance({
-  blockHeader: Models.createBlockHeaderInstance({
-    blockNumber: 2,
-    validator: '75821586eeee3dc40f7ef83df809c9a38de017ed3adaed8130becd267f5eeffb',
-    timestamp: +new Date(),
-    blockReward: this.BLOCK_REWARD,
-    parentHash: '235',
-  }),
+const state1 = Models.createStateInstance({
+  publicKey: 'test123123123',
+  coin: 50,
+  stake: 12,
 });
 
-const block2 = Models.createBlockInstance({
-  blockHeader: Models.createBlockHeaderInstance({
-    blockNumber: 3,
-    validator: '75821586eeee3dc40f7ef83df809c9a38de017ed3adaed8130becd267f5eeffb',
-    timestamp: +new Date(),
-    blockReward: this.BLOCK_REWARD,
-    parentHash: '0',
-  }),
+const state2 = Models.createStateInstance({
+  publicKey: 'test1231231238',
+  coin: 50,
+  stake: 12,
 });
 
-levelDB.openBlockchainLevelAsync().then(() => {
-  console.log('b');
-  return levelDB.blockchainRepository.putBlocksAsync([block1]);
+const state3 = Models.createStateInstance({
+  publicKey: 'me343434',
+  coin: 50,
+  stake: 12,
+});
+
+const transaction1 = Models.createTransactionInstance({
+  recipient: 'me343434',
+  amount: 25,
+  timestamp: +new Date(),
+  type: 'coin',
+  sender: 'test123123123',
+});
+
+const transaction2 = Models.createTransactionInstance({
+  recipient: 'test1231231238',
+  amount: 25,
+  timestamp: +new Date(),
+  type: 'coin',
+  sender: 'test123123123',
+});
+
+levelDB.openGlobalStateLevelAsync().then(() => {
+  console.log('-');
+  return levelDB.globalStateRepository.updateGlobalStateAsync([transaction1, transaction2]);
 }).then(() => {
-  console.log('a');
-  return levelDB.blockchainRepository.getBlockAsync(2);
-}).then((blocks) => {
-  console.log(blocks);
+  console.log('-');
+  return levelDB.globalStateRepository.getGlobalStateAsync();
+}).then((states) => {
+  console.log(states);
 })
   .catch((err) => {
     console.log(err);
