@@ -3,11 +3,11 @@ const startNumber = 1000000000;
 
 class LevelDatabase {
     constructor(verbose) {
-        this.verbose = verbose;
-        this.levelBlocks = new LevelDB('./database/level/blocks', verbose);
-        this.levelGlobalState = new LevelDB('./database/level/state', verbose);
-    }
-    //#region BlockChain
+            this.verbose = verbose;
+            this.levelBlocks = new LevelDB('./database/level/blocks', verbose);
+            this.levelGlobalState = new LevelDB('./database/level/state', verbose);
+        }
+        //#region BlockChain
 
     /**
      * Fetch the full blockchain in an array
@@ -17,15 +17,15 @@ class LevelDatabase {
             let blockChain = [];
 
             this.levelBlocks.getAll()
-                .on('data', function (data) {
+                .on('data', function(data) {
                     blockChain.push(data.value);
                     if (this.verbose) console.log(data.key, '=', data.value)
                 })
-                .on('error', function (err) {
+                .on('error', function(err) {
                     if (this.verbose) console.log('Error while fetching global state', err);
                     resolve(false);
                 })
-                .on('end', function () {
+                .on('end', function() {
                     resolve(blockChain);
                 });
         });
@@ -38,7 +38,7 @@ class LevelDatabase {
      */
     putBlock(blockNr, block) {
         return new Promise((resolve) => {
-            this.levelBlocks.put(blockNr + startNumber, block)
+            this.levelBlocks.put(block.blockHeader.blockNumber + startNumber, block)
                 .then((value) => {
                     resolve(value)
                 });
@@ -63,52 +63,52 @@ class LevelDatabase {
      * @param {number} blockNr = block.blockheader.blockNumber
      */
     deleteFromBlock(blockNr) {
-        return new Promise((resolve) => {
-            new Promise((resolved) => {
-                let batchCommand = [];
+            return new Promise((resolve) => {
+                new Promise((resolved) => {
+                    let batchCommand = [];
 
-                this.levelBlocks.getAll(blockNr + startNumber)
-                    .on('data', function (data) {
-                        batchCommand.push({ type: 'del', key: data.key });
-                        if (this.verbose) console.log(data.key, '=>', data.value)
-                    })
-                    .on('error', function (err) {
-                        if (this.verbose) console.log('Error while fetching keys', err);
-                        resolved(false);
-                    })
-                    .on('end', function () {
-                        resolved(batchCommand);
-                    });
-            }).then((value) => {
-                if (!value) resolve(false);
-                else this.levelBlocks.deleteAll(value)
-                    .then(() => {
-                        resolve(true)
-                    });
+                    this.levelBlocks.getAll(blockNr + startNumber)
+                        .on('data', function(data) {
+                            batchCommand.push({ type: 'del', key: data.key });
+                            if (this.verbose) console.log(data.key, '=>', data.value)
+                        })
+                        .on('error', function(err) {
+                            if (this.verbose) console.log('Error while fetching keys', err);
+                            resolved(false);
+                        })
+                        .on('end', function() {
+                            resolved(batchCommand);
+                        });
+                }).then((value) => {
+                    if (!value) resolve(false);
+                    else this.levelBlocks.deleteAll(value)
+                        .then(() => {
+                            resolve(true)
+                        });
+                });
             });
-        });
-    }
-    //#endregion
+        }
+        //#endregion
 
     //#region GlobalState
 
     /**
      * Gets global state from database
      */
-    getFullGlobalstate() {
-        return new Promise((resolve) => {
+    getFullGlobalState() {
+        return new Promise((resolve, reject) => {
             let globalState = [];
 
             this.levelGlobalState.getAll()
-                .on('data', function (data) {
+                .on('data', function(data) {
                     globalState.push(data);
                     if (this.verbose) console.log(data.key, '=', data.value)
                 })
-                .on('error', function (err) {
+                .on('error', function(err) {
                     if (this.verbose) console.log('Error while fetching global state', err);
-                    resolve(false);
+                    reject(false);
                 })
-                .on('end', function () {
+                .on('end', function() {
                     resolve(globalState);
                 });
         });
@@ -136,9 +136,9 @@ class LevelDatabase {
      * @param {string} key = public key
      * @param {wallet} value = balance {coinPerm, stakePerm}
      */
-    putAccountWallet(key, value) {
+    putAccountWallet(wallet) {
         return new Promise((resolve) => {
-            this.levelGlobalState.put(key, JSON.stringify(value))
+            this.levelGlobalState.put(wallet.pubkey, JSON.stringify(wallet))
                 .then((value) => {
                     resolve(value)
                 });
@@ -151,27 +151,27 @@ class LevelDatabase {
      * @param {wallet} permutation = change to balance
      */
     updateAccountWallet(key, wallet) {
-        return new Promise((resolve) => {
-            this.levelGlobalState.get(key)
-                .then((value) => {
-                    if (!value)
-                        this.putAccountWallet(key, wallet);
-                    else {
-                        let wal = JSON.parse(value);
-                        // console.log(wal)
-                        // console.log(wallet)
-                        wallet.coin += wal.coin;
-                        wallet.stake += wal.stake;
-                        this.putAccountWallet(key, wallet)
-                            .then((value) => {
-                                resolve(value)
-                            });
-                    }
+            return new Promise((resolve) => {
+                this.levelGlobalState.get(key)
+                    .then((value) => {
+                        if (!value)
+                            this.putAccountWallet(key, wallet);
+                        else {
+                            let wal = JSON.parse(value);
+                            // console.log(wal)
+                            // console.log(wallet)
+                            wallet.coin += wal.coin;
+                            wallet.stake += wal.stake;
+                            this.putAccountWallet(key, wallet)
+                                .then((value) => {
+                                    resolve(value)
+                                });
+                        }
 
-                });
-        });
-    }
-    //#endregion
+                    });
+            });
+        }
+        //#endregion
 }
 
 module.exports = LevelDatabase;
