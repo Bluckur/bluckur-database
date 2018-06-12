@@ -8,18 +8,24 @@ class Database {
         this.isbackUpValidator = isbackUpValidator;
         if (this.isbackUpValidator) {
             this.db = new MongoDatabase(true);
-            this.db.connect().then((value) => {
-                this.connected = true;
-            }).catch((exception) => {
-                this.connected = false
-            });
         } else {
             this.db = new LevelDatabase();
             this.connected = true;
         }
     }
 
-    //#region BlockChain
+    connect() {
+            return new Promise((resolve, reject) => {
+                this.db.connect().then((value) => {
+                    this.connected = true;
+                    resolve();
+                }).catch((exception) => {
+                    this.connected = false
+                    reject(exception);
+                });
+            });
+        }
+        //#region BlockChain
 
     /**
      * Fetch the full blockchain in an array
