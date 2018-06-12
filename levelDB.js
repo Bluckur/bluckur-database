@@ -12,7 +12,7 @@ class LevelDB {
   open(databasePath) {
     this.db = level(databasePath, { createIfMissing: true }, (err, db) => {
       if (err && this.verbose) console.log(err);
-      if(this.verbose) console.log('LevelDb started at ' + databasePath);
+      if (this.verbose) console.log(`LevelDb started at ${databasePath}`);
     });
   }
 
@@ -28,14 +28,14 @@ class LevelDB {
      * @param {*} value
      */
   put(key, value) {
-    //console.log(key)
-    //console.log(value)
+    // console.log(key)
+    // console.log(value)
     return new Promise((resolve) => {
       this.db.put(key, value, (err) => {
         if (err && this.verbose) console.log(`Unable to put ${value} into the database.`, err); // some kind of I/O error
         if (err) resolve(false);
         resolve(true);
-      })
+      });
     });
   }
 
@@ -48,7 +48,7 @@ class LevelDB {
     return new Promise((resolve) => {
       this.db.get(key, (err, value) => {
         if (err && this.verbose) {
-          //console.log(`${key} has no matches`);
+          // console.log(`${key} has no matches`);
           console.log(err);
         }
         if (value) resolve(value);
@@ -65,7 +65,7 @@ class LevelDB {
     return new Promise((resolve) => {
       this.db.del(key, (err) => {
         if (err && this.verbose) console.log(err);
-        if (err) resolve(false)
+        if (err) resolve(false);
         resolve(true);
       });
     });
@@ -74,10 +74,10 @@ class LevelDB {
   deleteAll(ops) {
     return new Promise((resolve) => {
       this.db.batch(ops, function (err) {
-        if (err && this.verbose) return console.log('Error deleting batch!', err)
-        if(err) resolve(false);
+        if (err && this.verbose) return console.log('Error deleting batch!', err);
+        if (err) resolve(false);
         resolve(true);
-      })
+      });
     });
   }
 
@@ -102,10 +102,8 @@ class LevelDB {
    * @param {long} from Inclusive
    */
   getAll(from) {
-    if (from)
-      return this.db.createReadStream({ gte: from });
-    else
-      return this.db.createReadStream();
+    if (from) { return this.db.createReadStream({ gte: from }); }
+    return this.db.createReadStream();
   }
 }
 
