@@ -10,7 +10,9 @@ class Database {
             this.db = new MongoDatabase(true);
             this.db.connect().then((value) => {
                 this.connected = true;
-            })
+            }).catch((exception) => {
+                this.connected = false
+            });
         } else {
             this.db = new LevelDatabase();
             this.connected = true;
