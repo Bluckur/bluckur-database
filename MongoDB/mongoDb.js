@@ -58,16 +58,17 @@ class MongoDatabase {
     }
 
     putBlock(blockData) {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             let block = new Block(blockData);
             block.save(function(err) {
                 if (err) {
-                    handleError(err);
-                    resolve(false)
-                } else if (verbose)
+                    reject(err);
+                } else if (verbose) {
                     console.log("[MongoDB]: Block saved succesfully");
+                }
                 resolve(true);
             });
+            resolve(block);
         });
     }
 
@@ -130,4 +131,4 @@ class MongoDatabase {
         });
     }
 }
-module.exports = MongoDatabase;
+module.exports = MongoDB;
