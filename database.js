@@ -32,32 +32,21 @@ class Database {
     }
 
     /**
-     * Put block in database.
+     * Put block in database. 
      * @param {Block} block must comply to the model block
      */
     putBlock(block) {
-        if (this.isbackUpValidator) {
-            //MongoDB
-            return new Promise((resolve) => {
-                this.mongoDB.putBlock(block)
-                    .then((value) => {
-                        resolve(value);
-                    });
-            });
-        } else {
-            //LevelDB
-            return new Promise((resolve) => {
-                this.levelDB.putBlock(block.blockHeader.blockNumber, JSON.stringify(block))
-                    .then((value) => {
-                        resolve(value);
-                    });
-            });
-        }
+        return new Promise((resolve) => {
+            this.db.putBlock(block)
+                .then((value) => {
+                    resolve(value);
+                });
+        });
     }
 
     /**
      * Gets block from database.
-     * @param {number} blockNr
+     * @param {number} blockNr 
      */
     getBlock(blockNr) {
         return new Promise((resolve) => {
@@ -127,8 +116,8 @@ class Database {
     }
 
     /**
-     *
-     * @param {Array<>} transactionList
+     * 
+     * @param {Array<>} transactionList 
      */
     updateAccountWallet(transactionList) {
         let transactions = {};
@@ -165,8 +154,4 @@ class Database {
     }
 }
 
-module.exports = () => {
-  return new Promise((resolve, reject) => {
-
-  });
-});
+module.exports = Database;

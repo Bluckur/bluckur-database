@@ -11,7 +11,6 @@
   "license": "MIT",
   "dependencies": {
     "bluckur-models": "git+https://github.com/Bluckur/bluckur-models.git",
-    "debug": "^3.1.0",
     "level": "^3.0.2",
     "mongoose": "^5.1.4",
     "morgan": "^1.9.0"
