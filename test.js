@@ -1,5 +1,5 @@
 require('dotenv').config();
-const mongoDB = require('./lib/mongoDB/mongoDB').createInstance();
+const db = require('./index').createInstance(false);
 const Models = require('bluckur-models');
 
 const state1 = Models.createStateInstance({
@@ -58,14 +58,8 @@ const block2 = Models.createBlockInstance({
   transactions: [transaction1, transaction2],
 });
 
-
-mongoDB.connectAsync().then(() => {
-  console.log('-');
-  return mongoDB.globalStateRepository.updateGlobalStateAsync([transaction1, transaction2]);
-  // return mongoDB.blockchainRepository.deleteBlocksAsync([3]);
-}).then(() => mongoDB.globalStateRepository.getGlobalStateAsync()).then((states) => {
-  console.log(states);
-})
-  .catch((err) => {
-    console.log(err);
+db.updateGlobalStateAsync([transaction1, transaction2]).then(() => {
+  db.getGlobalStateAsync().then((blocks) => {
+    console.log(blocks);
   });
+});

@@ -1,6 +1,20 @@
 const MongoDB = require('./lib/mongoDB/mongoDB');
 const LevelDB = require('./lib/levelDB/levelDB');
 
+function checkConnectionAsync(database) {
+  return new Promise((resolve, reject) => {
+    if (database.isConnected) {
+      resolve();
+    } else {
+      database.connectAsync().then(() => {
+        resolve();
+      }).catch((err) => {
+        reject(err);
+      });
+    }
+  });
+}
+
 class MasterRepository {
   constructor(isBackup, config) {
     if (isBackup) {
@@ -12,7 +26,9 @@ class MasterRepository {
 
   getBlockchainAsync() {
     return new Promise((resolve, reject) => {
-      this.database.blockchainRepository.getBlockchainAsync().then((blocks) => {
+      checkConnectionAsync(this.database).then(() => {
+        return this.database.blockchainRepository.getBlockchainAsync();
+      }).then((blocks) => {
         resolve(blocks);
       }).catch((err) => {
         reject(err);
@@ -22,7 +38,9 @@ class MasterRepository {
 
   getBlockAsync(blockNumber) {
     return new Promise((resolve, reject) => {
-      this.database.blockchainRepository.getBlockAsync(blockNumber).then((block) => {
+      checkConnectionAsync(this.database).then(() => {
+        return this.database.blockchainRepository.getBlockAsync(blockNumber);
+      }).then((block) => {
         resolve(block);
       }).catch((err) => {
         reject(err);
@@ -32,7 +50,9 @@ class MasterRepository {
 
   putBlocksAsync(block) {
     return new Promise((resolve, reject) => {
-      this.database.blockchainRepository.putBlocksAsync(block).then(() => {
+      checkConnectionAsync(this.database).then(() => {
+        return this.database.blockchainRepository.putBlocksAsync(block);
+      }).then(() => {
         resolve();
       }).catch((err) => {
         reject(err);
@@ -42,7 +62,9 @@ class MasterRepository {
 
   deleteBlocksAsync(blockNumbers) {
     return new Promise((resolve, reject) => {
-      this.database.blockchainRepository.deleteBlocksAsync(blockNumbers).then(() => {
+      checkConnectionAsync(this.database).then(() => {
+        return this.database.blockchainRepository.deleteBlocksAsync(blockNumbers);
+      }).then(() => {
         resolve();
       }).catch((err) => {
         reject(err);
@@ -52,7 +74,9 @@ class MasterRepository {
 
   getGlobalStateAsync() {
     return new Promise((resolve, reject) => {
-      this.database.globalStateRepository.getGlobalStateAsync().then((states) => {
+      checkConnectionAsync(this.database).then(() => {
+        return this.database.globalStateRepository.getGlobalStateAsync();
+      }).then((states) => {
         resolve(states);
       }).catch((err) => {
         reject(err);
@@ -62,7 +86,9 @@ class MasterRepository {
 
   getStateAsync(publicKey) {
     return new Promise((resolve, reject) => {
-      this.database.globalStateRepository.getStateAsync(publicKey).then((state) => {
+      checkConnectionAsync(this.database).then(() => {
+        return this.database.globalStateRepository.getStateAsync(publicKey);
+      }).then((state) => {
         resolve(state);
       }).catch((err) => {
         reject(err);
@@ -72,7 +98,9 @@ class MasterRepository {
 
   putStatesAsync(states) {
     return new Promise((resolve, reject) => {
-      this.database.globalStateRepository.putStatesAsync(states).then(() => {
+      checkConnectionAsync(this.database).then(() => {
+        return this.database.globalStateRepository.putStatesAsync(states);
+      }).then(() => {
         resolve();
       }).catch((err) => {
         reject(err);
@@ -82,7 +110,9 @@ class MasterRepository {
 
   updateGlobalStateAsync(transactions) {
     return new Promise((resolve, reject) => {
-      this.database.globalStateRepository.updateGlobalStateAsync(transactions).then(() => {
+      checkConnectionAsync(this.database).then(() => {
+        return this.database.globalStateRepository.updateGlobalStateAsync(transactions);
+      }).then(() => {
         resolve();
       }).catch((err) => {
         reject(err);
