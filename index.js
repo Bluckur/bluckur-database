@@ -49,6 +49,46 @@ class MasterRepository {
       });
     });
   }
+
+  getGlobalStateAsync() {
+    return new Promise((resolve, reject) => {
+      this.database.globalStateRepository.getGlobalStateAsync().then((states) => {
+        resolve(states);
+      }).catch((err) => {
+        reject(err);
+      });
+    });
+  }
+
+  getStateAsync(publicKey) {
+    return new Promise((resolve, reject) => {
+      this.database.globalStateRepository.getStateAsync(publicKey).then((state) => {
+        resolve(state);
+      }).catch((err) => {
+        reject(err);
+      });
+    });
+  }
+
+  putStatesAsync(states) {
+    return new Promise((resolve, reject) => {
+      this.database.globalStateRepository.putStatesAsync(states).then(() => {
+        resolve();
+      }).catch((err) => {
+        reject(err);
+      });
+    });
+  }
+
+  updateGlobalStateAsync(transactions) {
+    return new Promise((resolve, reject) => {
+      this.database.globalStateRepository.updateGlobalStateAsync(transactions).then(() => {
+        resolve();
+      }).catch((err) => {
+        reject(err);
+      });
+    });
+  }
 }
 
 module.exports = {
