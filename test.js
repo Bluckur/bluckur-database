@@ -61,10 +61,10 @@ const block2 = Models.createBlockInstance({
 
 mongoDB.connectAsync().then(() => {
   console.log('-');
-  return mongoDB.blockchainRepository.deleteBlocksAsync([3, 4]);
+  return mongoDB.globalStateRepository.updateGlobalStateAsync([transaction1, transaction2]);
   // return mongoDB.blockchainRepository.deleteBlocksAsync([3]);
-}).then(() => mongoDB.blockchainRepository.getBlockchainAsync()).then((blocks) => {
-  console.log(blocks);
+}).then(() => mongoDB.globalStateRepository.getGlobalStateAsync()).then((states) => {
+  console.log(states);
 })
   .catch((err) => {
     console.log(err);
