@@ -1,3 +1,4 @@
+require('dotenv').config();
 const levelDB = require('./lib/levelDB/levelDB').createInstance();
 const Models = require('bluckur-models');
 
@@ -35,12 +36,9 @@ const transaction2 = Models.createTransactionInstance({
   sender: 'test123123123',
 });
 
-levelDB.openGlobalStateLevelAsync().then(() => {
+levelDB.openBlockchainLevelAsync().then(() => {
   console.log('-');
-  return levelDB.globalStateRepository.updateGlobalStateAsync([transaction1, transaction2]);
-}).then(() => {
-  console.log('-');
-  return levelDB.globalStateRepository.getGlobalStateAsync();
+  return levelDB.blockchainRepository.getBlockchainAsync();
 }).then((states) => {
   console.log(states);
 })

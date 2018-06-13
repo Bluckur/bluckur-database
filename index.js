@@ -1,0 +1,58 @@
+const MongoDB = require('./lib/mongoDB/mongoDB');
+const LevelDB = require('./lib/levelDB/levelDB');
+
+class MasterRepository {
+  constructor(isBackup, config) {
+    if (isBackup) {
+      this.database = MongoDB.createInstance(config);
+    } else {
+      this.database = LevelDB.createInstance(config);
+    }
+  }
+
+  getBlockchainAsync(options) {
+    return new Promise((resolve, reject) => {
+      this.database.blockchainRepository.getBlockchainAsync(options).then((blocks) => {
+        resolve(blocks);
+      }).catch((err) => {
+        reject(err);
+      });
+    });
+  }
+
+  getBlockAsync(blockNumber) {
+    return new Promise((resolve, reject) => {
+      this.database.blockchainRepository.getBlockAsync(blockNumber).then((block) => {
+        resolve(block);
+      }).catch((err) => {
+        reject(err);
+      });
+    });
+  }
+
+  putBlocksAsync(block) {
+    return new Promise((resolve, reject) => {
+      this.database.blockchainRepository.putBlocksAsync(block).then(() => {
+        resolve();
+      }).catch((err) => {
+        reject(err);
+      });
+    });
+  }
+
+  deleteBlocksAsync(blockNumbers) {
+    return new Promise((resolve, reject) => {
+      this.database.blockchainRepository.deleteBlocksAsync(blockNumbers).then(() => {
+        resolve();
+      }).catch((err) => {
+        reject(err);
+      });
+    });
+  }
+}
+
+module.exports = {
+  createInstance(isBackup, config) {
+    return new MasterRepository(isBackup, config);
+  },
+};
