@@ -1,5 +1,5 @@
 require('dotenv').config();
-const db = require('./index').createInstance(false);
+const db = require('./index').createInstance();
 const Models = require('bluckur-models');
 
 const state1 = Models.createStateInstance({
@@ -59,7 +59,5 @@ const block2 = Models.createBlockInstance({
 });
 
 db.updateGlobalStateAsync([transaction1, transaction2]).then(() => {
-  db.getGlobalStateAsync().then((blocks) => {
-    console.log(blocks);
-  });
+  // console.log(blocks);
 });

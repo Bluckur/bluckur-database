@@ -1,5 +1,5 @@
-2018/06/13-16:16:53.081 fc88 Recovering log #19
-2018/06/13-16:16:53.081 fc88 Level-0 table #21: started
-2018/06/13-16:16:53.252 fc88 Level-0 table #21: 270 bytes OK
-2018/06/13-16:16:53.340 fc88 Delete type=0 #19
-2018/06/13-16:16:53.341 fc88 Delete type=3 #17
+2018/06/13-17:39:52.804 11d4c Recovering log #72
+2018/06/13-17:39:52.804 11d4c Level-0 table #74: started
+2018/06/13-17:39:52.978 11d4c Level-0 table #74: 271 bytes OK
+2018/06/13-17:39:53.076 11d4c Delete type=0 #72
+2018/06/13-17:39:53.078 11d4c Delete type=3 #70
