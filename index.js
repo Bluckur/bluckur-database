@@ -10,9 +10,9 @@ class MasterRepository {
     }
   }
 
-  getBlockchainAsync(options) {
+  getBlockchainAsync() {
     return new Promise((resolve, reject) => {
-      this.database.blockchainRepository.getBlockchainAsync(options).then((blocks) => {
+      this.database.blockchainRepository.getBlockchainAsync().then((blocks) => {
         resolve(blocks);
       }).catch((err) => {
         reject(err);
