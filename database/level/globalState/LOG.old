@@ -1,7 +1,0 @@
-2018/06/13-02:13:31.484 ffe4 Recovering log #82
-2018/06/13-02:13:31.484 ffe4 Level-0 table #84: started
-2018/06/13-02:13:32.664 ffe4 Level-0 table #84: 275 bytes OK
-2018/06/13-02:13:32.761 ffe4 Delete type=0 #82
-2018/06/13-02:13:32.763 ffe4 Delete type=2 #83
-2018/06/13-02:13:32.765 ffe4 Delete type=3 #80
-2018/06/13-02:13:32.768 ff6c Compacting 5@0 + 1@1 files
