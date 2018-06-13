@@ -1,5 +1,5 @@
 require('dotenv').config();
-const levelDB = require('./lib/levelDB/levelDB').createInstance();
+const mongoDB = require('./lib/mongoDB/mongoDB').createInstance();
 const Models = require('bluckur-models');
 
 const state1 = Models.createStateInstance({
@@ -36,11 +36,35 @@ const transaction2 = Models.createTransactionInstance({
   sender: 'test123123123',
 });
 
-levelDB.openBlockchainLevelAsync().then(() => {
+const block1 = Models.createBlockInstance({
+  blockHeader: Models.createBlockHeaderInstance({
+    blockNumber: 3,
+    validator: 'test1231231238',
+    timestamp: +new Date(),
+    blockReward: this.BLOCK_REWARD,
+    parentHash: '2323',
+  }),
+  transactions: [transaction1, transaction2],
+});
+
+const block2 = Models.createBlockInstance({
+  blockHeader: Models.createBlockHeaderInstance({
+    blockNumber: 4,
+    validator: 'test1231231238',
+    timestamp: +new Date(),
+    blockReward: this.BLOCK_REWARD,
+    parentHash: '2323',
+  }),
+  transactions: [transaction1, transaction2],
+});
+
+
+mongoDB.connectAsync().then(() => {
   console.log('-');
-  return levelDB.blockchainRepository.getBlockchainAsync();
-}).then((states) => {
-  console.log(states);
+  return mongoDB.blockchainRepository.deleteBlocksAsync([3, 4]);
+  // return mongoDB.blockchainRepository.deleteBlocksAsync([3]);
+}).then(() => mongoDB.blockchainRepository.getBlockchainAsync()).then((blocks) => {
+  console.log(blocks);
 })
   .catch((err) => {
     console.log(err);
