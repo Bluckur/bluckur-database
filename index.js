@@ -177,6 +177,23 @@ class MasterRepository {
       });
     });
   }
+
+  /**
+   * [clearGlobalStateAsync description]
+   * @param  {Transaction[]} transactions [description]
+   * @return {Promise}              [description]
+   */
+  clearGlobalStateAsync(transactions) {
+    return new Promise((resolve, reject) => {
+      checkConnectionAsync(this.database).then(() => {
+        return this.database.globalStateRepository.clearGlobalStateAsync(transactions);
+      }).then(() => {
+        resolve();
+      }).catch((err) => {
+        reject(err);
+      });
+    });
+  }
 }
 
 module.exports = {
