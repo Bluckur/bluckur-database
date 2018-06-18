@@ -194,6 +194,20 @@ class MasterRepository {
       });
     });
   }
+
+  /**
+   * [connectAsync description]
+   * @return {Promise} [description]
+   */
+  connectAsync() {
+    return new Promise((resolve, reject) => {
+      checkConnectionAsync(this.database).then(() => {
+        resolve();
+      }).catch((err) => {
+        reject(err);
+      });
+    });
+  }
 }
 
 module.exports = {
