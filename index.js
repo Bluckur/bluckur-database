@@ -1,6 +1,9 @@
 const MongoDB = require('./lib/mongoDB/mongoDB');
 const LevelDB = require('./lib/levelDB/levelDB');
 
+// Singleton support
+let instance = null;
+
 /**
  * Private function to checks and establish a connection
  * if there isn't one already.
@@ -217,7 +220,10 @@ module.exports = {
    * @param  {Object}  config   [description]
    * @return {MasterRepository}           [description]
    */
-  createInstance(isBackup, config) {
-    return new MasterRepository(isBackup, config);
+  getInstance(isBackup, config) {
+    if (!instance) {
+      instance = new MasterRepository(isBackup, config);
+    }
+    return instance;
   },
 };
